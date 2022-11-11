@@ -129,7 +129,18 @@ class Owner(commands.Cog):
         eend = end.replace(' ', ', ')
         await ctx.reply(f'List of loaded cogs: `{eend}({len(self.bot.cogs)})`')
 
+    @commands.command(name='todo', hidden=True)
+    @commands.is_owner()
+    async def _todo(self, ctx, *, todo: str):
+        if todo is None:
+            await ctx.send("Need you to give me something to add.")
+        else:
+            em = discord.Embed(color=0xb6bbf9)
+            em.add_field(name='Todo:', value=f'```py\n{todo}\n```')
+            todo_chan = self.bot.get_channel(1039235504207564911)
 
+            await todo_chan.send(embed=em)
+            await ctx.message.add_reaction('✅')
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Owner(bot))

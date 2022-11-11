@@ -56,6 +56,7 @@ class Slatt(commands.Bot):
 
         async with self, pool_pg:
             self.db = pool_pg
+
             print(f'>> {Fore.YELLOW}Loading cogs......')
             await self.load_extension('jishaku')
             print(f'  - jishaku')
@@ -63,6 +64,7 @@ class Slatt(commands.Bot):
                 await self.load_extension(ext)
                 print(f'  - {ext}')
             print(f">> {Fore.GREEN}Finished loading cogs")
+
             await self.start(self.token)
 
 
