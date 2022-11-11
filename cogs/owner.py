@@ -11,13 +11,6 @@ class Owner(commands.Cog):
     """All owner commands."""
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
-    
-    # @commands.command(hidden=True)
-    # @commands.guild_only()
-    # @commands.is_owner()
-    # async def sync(self, ctx) -> None:
-    #     fmt = await self.bot.tree.sync(guild=ctx.guild)
-    #     await ctx.send(f'Commands Synced({len(fmt)}).')
 
     @commands.command()
     @commands.guild_only()

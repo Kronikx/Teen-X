@@ -25,8 +25,7 @@ class Slatt(commands.Bot):
             'cogs.database',
             'cogs.events',
             'cogs.misc',
-            'cogs.owner',
-            'cogs.servers']
+            'cogs.owner']
         super().__init__(
             command_prefix= commands.when_mentioned_or('-'),
             mentions = mentions,
@@ -80,6 +79,14 @@ class Slatt(commands.Bot):
 
     async def on_ready(self):
         print(f'>> {Fore.GREEN}Ready: {self.user} (ID: {self.user.id})')
+
+    # async def getprefix(self, message):
+    #     data = await self.db.fetchrow("SELECT prefix FROM guilds WHERE id = $1", message.guild)
+    #     print(data)
+    #     if data:
+    #         return data[0]
+    #     else:
+    #         return '-'
 
 
 bot = Slatt()
