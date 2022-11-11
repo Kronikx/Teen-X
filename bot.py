@@ -13,7 +13,7 @@ from colorama import init, Fore
 init(autoreset=True) # Resetting print shit to default
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
-mentions = discord.AllowedMentions(everyone=False, user=True, roles=False, replied_user=True)
+mentions = discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=True)
 intentss = discord.Intents(guilds=True, members=True, bans=True, emojis=True, voice_states=False, messages=True, reactions=True, message_content=True)
 
 class Slatt(commands.Bot):
