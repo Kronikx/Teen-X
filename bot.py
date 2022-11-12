@@ -65,7 +65,7 @@ class Slatt(commands.Bot):
                 print(f'  - {ext}')
             print(f">> {Fore.GREEN}Finished loading cogs")
 
-            await self.start(self.token)
+            await self.start(self.token, reconnect=True)
 
 
     async def close(self):

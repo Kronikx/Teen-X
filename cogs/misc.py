@@ -96,4 +96,4 @@ class Misc(commands.Cog):
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(
         Misc(bot),
-        guilds = [discord.Object(id = 1037005626112491522)])
+        guilds = [discord.Object(id = 1037005626112491522), discord.Object(id = 924924186697281567)])
