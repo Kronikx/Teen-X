@@ -62,7 +62,7 @@ class Slatt(commands.Bot):
         print(f'>> {Fore.GREEN}Ready: {self.user} (ID: {self.user.id})')
         print(f">> {Fore.YELLOW}Guilds:")
         for g in self.guilds:
-            print(f" -{Fore.YELLOW}Name: {g.name}, ID: {g.id}, Members: {sum(not m.bot for m in g.members)}")
+            print(f"  - {Fore.BLUE}Name: {g.name}, ID: {g.id}, Members: {sum(not m.bot for m in g.members)}")
 
 
 bot = Slatt()
