@@ -1,10 +1,8 @@
 import os
 import asyncio
-import time
 import contextlib
 
 import discord
-import asyncpg
 
 from discord.ext import commands
 from decouple import config
@@ -18,11 +16,9 @@ intentss = discord.Intents(guilds=True, members=True, bans=True, emojis=True, vo
 
 class Slatt(commands.Bot):
     def __init__(self):
-        self.pool_pg = None
         self.token = config("TOKEN")
 
         self.initial_extensions = [
-            'cogs.database',
             'cogs.events',
             'cogs.misc',
             'cogs.owner']
@@ -41,36 +37,19 @@ class Slatt(commands.Bot):
     async def main(self) -> None:
         """Starts the bot properly"""
         print(f'>> {Fore.MAGENTA}Starting Slatt')
-        try:
-            start = time.perf_counter()
-            print(f'>> {Fore.CYAN}Establishing database connection.....')
-            pool_pg = await asyncpg.create_pool(
-                host=config('HOST'), database=config('DATABASE'), 
-                user=config('USER'), password=config('PWD')
-                )
-            end = time.perf_counter()
-            db_ping = (end - start) * 1000
-        except Exception as e:
-            print(f'>> {Fore.RED}Couldnt establish DB connection: {e}')
-        print(f'>> {Fore.CYAN}Database connection established, ({int(db_ping)}s).')
+        print(f'>> {Fore.YELLOW}Loading cogs......')
+        await self.load_extension('jishaku')
+        print(f'  - jishaku')
+        for ext in self.initial_extensions:
+            await self.load_extension(ext)
+            print(f'  - {ext}')
+        print(f">> {Fore.GREEN}Finished loading cogs")
 
-        async with self, pool_pg:
-            self.db = pool_pg
-
-            print(f'>> {Fore.YELLOW}Loading cogs......')
-            await self.load_extension('jishaku')
-            print(f'  - jishaku')
-            for ext in self.initial_extensions:
-                await self.load_extension(ext)
-                print(f'  - {ext}')
-            print(f">> {Fore.GREEN}Finished loading cogs")
-
-            await self.start(self.token, reconnect=True)
+        await self.start(self.token, reconnect=True)
 
 
     async def close(self):
         await super().close()
-        await self.db.close()
         print(f'>> {Fore.GREEN}Bot shutdown complete.')
 
 
@@ -81,14 +60,6 @@ class Slatt(commands.Bot):
 
     async def on_ready(self):
         print(f'>> {Fore.GREEN}Ready: {self.user} (ID: {self.user.id})')
-
-    # async def getprefix(self, message):
-    #     data = await self.db.fetchrow("SELECT prefix FROM guilds WHERE id = $1", message.guild)
-    #     print(data)
-    #     if data:
-    #         return data[0]
-    #     else:
-    #         return '-'
 
 
 bot = Slatt()

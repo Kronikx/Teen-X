@@ -19,18 +19,10 @@ class Misc(commands.Cog):
         except Exception as e:
             await sendtologs(self, type='error', msg=e)
             pass
-        try:
-            db_start = time.perf_counter()
-            await self.bot.db.fetchrow("SELECT * FROM guilds") #Getting Database ping
-            db_end = time.perf_counter()
-            db_ping = round((db_end-db_start)*1000)
-        except Exception as e:
-            await sendtologs(self, type='database', msg=e)
-            pass
 
         web_ping = round(self.bot.latency*1000) 
 
-        await ctx.reply(f'<:sql:1040254600483196928> **{db_ping}ms**\n<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
+        await ctx.reply(f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
 
 
     # @commands.group(name='emoji', invoke_without_command=False)

@@ -6,7 +6,6 @@ from utils.functions import sendtologs
 
 init(autoreset=True)
 
-
 class Events(commands.Cog):
     """All bot events."""
     def __init__(self, bot: commands.bot) -> None:
@@ -22,26 +21,12 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        status = await self.bot.db.fetchrow("SELECT status FROM guilds WHERE id = $1", guild.id)
-        if status[0] == True:
-            print(f'{Fore.BLUE}[GUILD] {Fore.GREEN}Joined a new guild {guild.name}({guild.id})')
-            await sendtologs(self, type='guild', msg=f'Joined a new guild {guild.name}({guild.id})')
-            pass   
-        else:
-            await guild.leave()
-            await sendtologs(self, type='guild', msg=f'Left guild {guild.name}({guild.id})\nGuild not authorized.')
+        await sendtologs(self, type='guild', msg=f'Joined a new guild {guild.name}({guild.id})')
 
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        status = await self.bot.db.fetchrow("SELECT status FROM guilds WHERE id = $1", guild.id)
-        if status:
-            await self.bot.db.execute("DELETE FROM guilds WHERE id = $1", guild.id)
-            print(f'{Fore.BLUE}[GUILD] {Fore.RED}Left guild {guild.name}({guild.id})')
-            await sendtologs(self, type='guild', msg=f'Left guild {guild.name}({guild.id})')
-        else:
-            print(f'{Fore.BLUE}[GUILD] {Fore.RED}Left guild {guild.name}({guild.id})')
-            await sendtologs(self, type='guild', msg=f'Left guild {guild.name}({guild.id})')
+        await sendtologs(self, type='guild', msg=f'Left guild {guild.name}({guild.id})')
 
 
     @commands.Cog.listener()
