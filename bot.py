@@ -36,7 +36,7 @@ class Slatt(commands.Bot):
     # Do everything here
     async def main(self) -> None:
         """Starts the bot properly"""
-        print(f'>> {Fore.MAGENTA}Starting Slatt')
+        print(f'>> {Fore.YELLOW}Starting Slatt')
         print(f'>> {Fore.YELLOW}Loading cogs......')
         await self.load_extension('jishaku')
         print(f'  - jishaku')
@@ -60,6 +60,9 @@ class Slatt(commands.Bot):
 
     async def on_ready(self):
         print(f'>> {Fore.GREEN}Ready: {self.user} (ID: {self.user.id})')
+        print(f'>> {Fore.YELLOW}Guilds:")
+        for g in self.guilds:
+            print(f" -{Fore.YELLOW}Name: {g.name}, ID: {g.id}, Members: {sum(not m.bot for m in g.members)}")
 
 
 bot = Slatt()
