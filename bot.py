@@ -14,8 +14,7 @@ os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
 log = logging.getLogger(__name__)
 
 initial_extensions = (
-    'jishaku',
-    'cogs.owner.owner',
+    'cogs.owner',
     'cogs.misc',
     'cogs.users',
 )
@@ -58,10 +57,10 @@ class Slatt(commands.Bot):
         goingupmsg = f'<a:typing:1040254641121804359> Starting up at....... <t:{int(time.time())}:F>'
         await self.SendWebhook('https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=goingupmsg)
 
+        await self.load_extension('jishaku')
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
-                log.exception('Loaded %s', extension)
             except Exception as e:
                 log.exception('Falied to load extension %s.', extension)
 
