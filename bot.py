@@ -61,6 +61,7 @@ class Slatt(commands.Bot):
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
+                log.exception('Loaded %s', extension)
             except Exception as e:
                 log.exception('Falied to load extension %s.', extension)
 
