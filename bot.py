@@ -3,6 +3,7 @@ from __future__ import annotations
 from discord.ext import commands
 import discord
 import os
+import time
 import aiohttp
 import logging
 from decouple import config
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 
 initial_extensions = (
     'jishaku',
-    'cogs.owner',
+    'cogs.owner.owner',
     'cogs.misc',
     'cogs.users',
 )
@@ -54,6 +55,9 @@ class Slatt(commands.Bot):
         self.bot_app_info = await self.application_info()
         self.owner_id = self.bot_app_info.owner.id
         
+        goingupmsg = f'<a:typing:1040254641121804359> Starting up at....... <t:{int(time.time())}:F>'
+        await self.SendWebhook('https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=goingupmsg)
+
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
@@ -76,9 +80,16 @@ class Slatt(commands.Bot):
         elif isinstance(error, commands.ArgumentParsingError):
             await ctx.send(str(error))
 
+    async def SendWebhook(self, webhookURL: str, content):
+        async with aiohttp.ClientSession() as session:
+            webhook = discord.Webhook.from_url(webhookURL, session=session)
+            await webhook.send(content)
+
     async def on_ready(self):
         if not hasattr(self, 'uptime'):
             self.uptime = discord.utils.utcnow()
+            msgtosend = f'<:check:904229396808888320> Bot is ready <t:{int(time.time())}:F>'
+            await self.SendWebhook('https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=msgtosend)
 
         log.info('Ready: %s (ID: %s)', self.user, self.user.id)
 
@@ -86,7 +97,7 @@ class Slatt(commands.Bot):
         if after.embeds or before.embeds:
             return
         if after.author.id == before.author.id:
-            return await self.bot.process_commands(after)
+            return await self.process_commands(after)
 
     async def close(self) -> None:
         await super().close()
@@ -94,3 +105,4 @@ class Slatt(commands.Bot):
 
     async def start(self) -> None:
         await super().start(config("TOKEN"), reconnect=True)
+

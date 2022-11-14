@@ -4,6 +4,8 @@ from typing import Optional, Literal
 from discord.ext import commands
 from colorama import init, Fore
 from utils.functions import sendtologs
+from bot import Slatt
+import time
 
 init(autoreset=True)
 
@@ -11,6 +13,14 @@ class Owner(commands.Cog):
     """All owner commands."""
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
+
+    @commands.command()
+    @commands.is_owner()
+    async def shutdown(self, ctx):
+        msgtosend = f'🛑 Bot stopped at...... <t:{int(time.time())}:F>'
+        await Slatt.SendWebhook(self, webhookURL='https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=msgtosend)
+        await ctx.send(f"Logging out now......")
+        await ctx.bot.close()
 
     @commands.command()
     @commands.guild_only()
