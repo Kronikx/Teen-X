@@ -1,2 +1,2 @@
 # Cleopatra
-private discord bot 
+private discord bot - rewriting
