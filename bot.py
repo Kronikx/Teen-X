@@ -1,69 +1,96 @@
-import os
-import asyncio
-import contextlib
-
-import discord
+from __future__ import annotations
 
 from discord.ext import commands
+import discord
+import os
+import aiohttp
+import logging
 from decouple import config
-from colorama import init, Fore
+from typing import Any
 
-init(autoreset=True) # Resetting print shit to default
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
-mentions = discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=True)
-intentss = discord.Intents(guilds=True, members=True, bans=True, emojis=True, voice_states=False, messages=True, reactions=True, message_content=True)
+log = logging.getLogger(__name__)
+
+initial_extensions = (
+    'jishaku',
+    'cogs.owner',
+    'cogs.misc',
+    'cogs.users',
+)
 
 class Slatt(commands.Bot):
-    def __init__(self):
-        self.token = config("TOKEN")
+    user: discord.ClientUser
+    logging_handler: Any
+    bot_app_info: discord.AppInfo
 
-        self.initial_extensions = [
-            'cogs.events',
-            'cogs.misc',
-            'cogs.owner']
+    def __init__(self):
+        allowed_mentions = discord.AllowedMentions(roles=False, everyone=False, users=True)
+        intents = discord.Intents(
+            guilds=True,
+            members=True,
+            bans=True,
+            emojis=True,
+            voice_states=True,
+            messages=True,
+            reactions=True,
+            message_content=True,
+        )
         super().__init__(
             command_prefix= commands.when_mentioned_or('-'),
-            mentions = mentions,
-            intents = intentss,
+            mentions = allowed_mentions,
+            intents = intents,
             case_insensitive = True,
             application_id = 1040566823579566160,
-            chunk_guilds_at_startup=True,
+            chunk_guilds_at_startup=False,
             heartbeat_timeout=150.0,
-            enable_debug_events=True)
+            enable_debug_events=True,
+        )
 
-    # Starting the bot
-    # Do everything here
-    async def main(self) -> None:
-        """Starts the bot properly"""
-        print(f'>> {Fore.YELLOW}Starting Slatt')
-        print(f'>> {Fore.YELLOW}Loading cogs......')
-        await self.load_extension('jishaku')
-        print(f'  - jishaku')
-        for ext in self.initial_extensions:
-            await self.load_extension(ext)
-            print(f'  - {ext}')
-        print(f">> {Fore.GREEN}Finished loading cogs")
+        self.client_key = 1040566823579566160
 
-        await self.start(self.token, reconnect=True)
+    async def setup_hook(self) -> None:
+        self.session = aiohttp.ClientSession()
+        self.bot_app_info = await self.application_info()
+        self.owner_id = self.bot_app_info.owner.id
+        
+        for extension in initial_extensions:
+            try:
+                await self.load_extension(extension)
+            except Exception as e:
+                log.exception('Falied to load extension %s.', extension)
 
+    @property
+    def owner(self) -> discord.User:
+        return self.bot_app_info.owner
 
-    async def close(self):
-        await super().close()
-        print(f'>> {Fore.GREEN}Bot shutdown complete.')
-
-
-    def starter(self):
-        with contextlib.suppress(KeyboardInterrupt):
-            asyncio.run(self.main())
-
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if isinstance(error, commands.NoPrivateMessage):
+            await ctx.author.send('This command cannot be used in private messages.')
+        elif isinstance(error, commands.DisabledCommand):
+            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
+        elif isinstance(error, commands.CommandInvokeError):
+            original = error.original
+            if not isinstance(original, discord.HTTPException):
+                log.exception('In %s:', ctx.command.qualified_name, exc_info=original)
+        elif isinstance(error, commands.ArgumentParsingError):
+            await ctx.send(str(error))
 
     async def on_ready(self):
-        print(f'>> {Fore.GREEN}Ready: {self.user} (ID: {self.user.id})')
-        print(f">> {Fore.YELLOW}Guilds:")
-        for g in self.guilds:
-            print(f"  - {Fore.BLUE}Name: {g.name}, ID: {g.id}, Members: {sum(not m.bot for m in g.members)}")
+        if not hasattr(self, 'uptime'):
+            self.uptime = discord.utils.utcnow()
 
+        log.info('Ready: %s (ID: %s)', self.user, self.user.id)
 
-bot = Slatt()
-bot.starter()
+    async def on_message_edit(self, before = discord.Message, after = discord.Message):
+        if after.embeds or before.embeds:
+            return
+        if after.author.id == before.author.id:
+            return await self.bot.process_commands(after)
+
+    async def close(self) -> None:
+        await super().close()
+        await self.session.close()
+
+    async def start(self) -> None:
+        await super().start(config("TOKEN"), reconnect=True)
