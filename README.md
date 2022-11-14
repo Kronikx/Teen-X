@@ -1,0 +1,2 @@
+# Cleopatra
+private discord bot 
