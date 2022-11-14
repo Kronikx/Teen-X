@@ -87,7 +87,7 @@ class Owner(commands.Cog):
             try:
                 await self.bot.unload_extension(f'cogs.{extension}')
                 print(f'>> {Fore.GREEN}Unloaded {extension}.py')
-                await ctx.reply(f'`Unoaded {extension}`')
+                await ctx.reply(f'`Unloaded {extension}`')
             except Exception as e:
                 await ctx.reply(f'Failed to unload {extension}')
                 print(f'{Fore.RED}Failed to unload {extension}')
