@@ -64,9 +64,9 @@ class Slatt(commands.Bot):
             except Exception as e:
                 log.exception('Falied to load extension %s.', extension)
 
-    @property
-    def owner(self) -> discord.User:
-        return self.bot_app_info.owner
+    # @property
+    # def owner(self) -> discord.User:
+        # return self.bot_app_info.owner
 
     async def on_command_error(self, ctx, error):
         ignored = (commands.CommandNotFound, commands.TooManyArguments)
