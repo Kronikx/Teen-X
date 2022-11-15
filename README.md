@@ -1,2 +1,2 @@
 # Cleopatra
-private discord bot
+A private discord bot (discord.py)
