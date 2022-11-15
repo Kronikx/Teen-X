@@ -13,6 +13,7 @@ class Owner(commands.Cog):
     """All owner commands."""
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
+        self.owner_ids = [168376879479390208, 459439879269646358, 876344421656981544, 948796139954655235]
 
     @commands.command()
     @commands.is_owner()
