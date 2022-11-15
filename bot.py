@@ -55,8 +55,8 @@ class Slatt(commands.Bot):
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
-        self.bot_app_info = await self.application_info()
-        self.owner_id = self.bot_app_info.owner.id
+        # self.bot_app_info = await self.application_info()
+        self.owner_ids = [168376879479390208, 459439879269646358, 876344421656981544]
 
         for extension in initial_extensions:
             try:
