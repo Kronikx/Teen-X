@@ -1,19 +1,23 @@
 from __future__ import annotations
 
+from utils.functions import sendtologs
 from discord.ext import commands
 import discord
 import os
 import time
 import aiohttp
 import logging
-from decouple import config
+import json
 from typing import Any
+from decouple import config
+
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
 log = logging.getLogger(__name__)
 
 initial_extensions = (
+    'jishaku',
     'cogs.owner',
     'cogs.misc',
     'cogs.users',
@@ -53,11 +57,7 @@ class Slatt(commands.Bot):
         self.session = aiohttp.ClientSession()
         self.bot_app_info = await self.application_info()
         self.owner_id = self.bot_app_info.owner.id
-        
-        goingupmsg = f'<a:typing:1040254641121804359> Starting up at....... <t:{int(time.time())}:F>'
-        await self.SendWebhook('https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=goingupmsg)
 
-        await self.load_extension('jishaku')
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
@@ -68,36 +68,68 @@ class Slatt(commands.Bot):
     def owner(self) -> discord.User:
         return self.bot_app_info.owner
 
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.author.send('This command cannot be used in private messages.')
-        elif isinstance(error, commands.DisabledCommand):
-            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
-        elif isinstance(error, commands.CommandInvokeError):
-            original = error.original
-            if not isinstance(original, discord.HTTPException):
-                log.exception('In %s:', ctx.command.qualified_name, exc_info=original)
-        elif isinstance(error, commands.ArgumentParsingError):
-            await ctx.send(str(error))
+    async def on_command_error(self, ctx, error):
+        ignored = (commands.CommandNotFound, commands.TooManyArguments)
+        send_embed = (commands.MissingPermissions, commands.DisabledCommand, discord.HTTPException, commands.NotOwner,
+                      commands.CheckFailure, commands.MissingRequiredArgument, commands.BadArgument,
+                      commands.BadUnionArgument)
 
-    async def SendWebhook(self, webhookURL: str, content):
-        async with aiohttp.ClientSession() as session:
-            webhook = discord.Webhook.from_url(webhookURL, session=session)
-            await webhook.send(content)
+        errors = {
+            commands.MissingPermissions: "You do not have the required permissions to use this command.",
+            commands.DisabledCommand: "This command is currently disabled.",
+            discord.HTTPException: "There was an error connecting to Discord. Please try again.",
+            commands.CommandInvokeError: "There was an issue running the command.",
+            commands.NotOwner: "You are not the owner.",
+            commands.CheckFailure: "This command cannot be used in this guild!",
+            commands.MissingRole: "You're missing the **{}** role",
+            commands.MissingRequiredArgument: "`{}` is a required argument!"
+        }
 
-    async def on_ready(self):
-        if not hasattr(self, 'uptime'):
-            self.uptime = discord.utils.utcnow()
-            msgtosend = f'<:check:904229396808888320> Bot is ready <t:{int(time.time())}:F>'
-            await self.SendWebhook('https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=msgtosend)
+        if isinstance(error, ignored):
+            return
 
-        log.info('Ready: %s (ID: %s)', self.user, self.user.id)
+        if isinstance(error, send_embed):
+            if isinstance(error, commands.MissingRequiredArgument):
+                err = errors.get(error.__class__).format(str(error.param).partition(':')[0])
+            elif isinstance(error, commands.MissingRole):
+                role = ctx.guild.get_role(error.missing_role)
+                err = errors.get(error.__class__).format(role.mention)
+            else:
+                efd = errors.get(error.__class__)
+                err = str(efd)
+                if not efd:
+                    err = str(error)
+
+            em = discord.Embed(description = f"{str(err)}", color = discord.Colour.red())
+            try:
+                await ctx.send(embed = em)
+                return
+            except discord.Forbidden:
+                pass
+
+        # when error is not handled above
+        em = discord.Embed(
+            title = 'Bot Error:',
+            description = f'```py\n{error}\n```',
+            color = discord.Colour.red()
+        )
+        await ctx.send(embed = discord.Embed(description = f"`{error}`",
+                                             color = discord.Colour.red()))
+        await sendtologs(self, type='error', msg=error)
+
+    async def on_message(self, message = discord.Message):
+        await self.process_commands(message)
 
     async def on_message_edit(self, before = discord.Message, after = discord.Message):
         if after.embeds or before.embeds:
             return
         if after.author.id == before.author.id:
             return await self.process_commands(after)
+
+    async def on_ready(self):
+        if not hasattr(self, 'uptime'):
+            self.uptime = discord.utils.utcnow()
+            log.info('Ready: %s (ID: %s)', self.user, self.user.id)
 
     async def close(self) -> None:
         await super().close()
