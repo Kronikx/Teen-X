@@ -17,7 +17,7 @@ class Misc(commands.Cog):
             t_2 = time.perf_counter()
             api_ping = round((t_2-t_1)*1000)
         except Exception as e:
-            await sendtologs(self, type='error', msg=e)
+            await sendtologs(self.bot, type='error', msg=e)
             pass
 
         web_ping = round(self.bot.latency*1000) 

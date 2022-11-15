@@ -1,8 +1,8 @@
 import discord
 
 async def sendtologs(self, type, msg):
-    error_channel = self.bot.get_channel(1037010318544617554)
-    guild_channel = self.bot.get_channel(1040221622826700843)
+    error_channel = self.get_channel(1037010318544617554)
+    guild_channel = self.get_channel(1040221622826700843)
 
     if type == "error":
         eem = discord.Embed(color=0xff0000)

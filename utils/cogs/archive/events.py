@@ -21,12 +21,12 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        await sendtologs(self, type='guild', msg=f'Joined a new guild {guild.name}({guild.id})')
+        await sendtologs(self.bot, type='guild', msg=f'Joined a new guild {guild.name}({guild.id})')
 
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        await sendtologs(self, type='guild', msg=f'Left guild {guild.name}({guild.id})')
+        await sendtologs(self.bot, type='guild', msg=f'Left guild {guild.name}({guild.id})')
 
 
     @commands.Cog.listener()

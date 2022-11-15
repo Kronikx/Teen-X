@@ -15,14 +15,6 @@ class Owner(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.is_owner()
-    async def shutdown(self, ctx):
-        msgtosend = f'🛑 Bot stopped at...... <t:{int(time.time())}:F>'
-        await Slatt.SendWebhook(self, webhookURL='https://canary.discord.com/api/webhooks/1041692417004408913/9nBnvM_SzeU-3hxgAL0bz411rS1yadS7QxLcfBCUgc37DTR6hCdCl8mm6UeXuqaL3khl', content=msgtosend)
-        await ctx.send(f"Logging out now......")
-        await ctx.bot.close()
-
-    @commands.command()
     @commands.guild_only()
     @commands.is_owner()
     async def sync(self, ctx, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None) -> None:
@@ -66,7 +58,7 @@ class Owner(commands.Cog):
                 except Exception as e:
                     await ctx.reply(f'Failed to load {ext}')
                     print(f'{Fore.RED}Failed to load {ext}')
-                    await sendtologs(self, type='error', msg=e)
+                    await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Loaded {extension.replace(" ", ", ")}')
         else:
@@ -77,7 +69,7 @@ class Owner(commands.Cog):
             except Exception as e:
                 await ctx.reply(f'Failed to load {extension}')
                 print(f'{Fore.RED}Failed to load {extension}')
-                await sendtologs(self, type='error', msg=e)
+                await sendtologs(self.bot, type='error', msg=e)
 
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
@@ -90,7 +82,7 @@ class Owner(commands.Cog):
                 except Exception as e:
                     await ctx.reply(f'Failed to unload {ext}')
                     print(f'{Fore.RED}Failed to unload {ext}')
-                    await sendtologs(self, type='error', msg=e)
+                    await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Unloaded {extension.replace(" ", ", ")}')
         else:
@@ -101,7 +93,7 @@ class Owner(commands.Cog):
             except Exception as e:
                 await ctx.reply(f'Failed to unload {extension}')
                 print(f'{Fore.RED}Failed to unload {extension}')
-                await sendtologs(self, type='error', msg=e)
+                await sendtologs(self.bot, type='error', msg=e)
 
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
@@ -114,7 +106,7 @@ class Owner(commands.Cog):
                 except Exception as e:
                     await ctx.reply(f'Failed to reload {ext}')
                     print(f'{Fore.RED}Failed to reload {ext}')
-                    await sendtologs(self, type='error', msg=e)
+                    await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Reloaded {extension.replace(" ", ", ")}')
         else:
@@ -125,7 +117,7 @@ class Owner(commands.Cog):
             except Exception as e:
                 await ctx.reply(f'Failed to reload {extension}')
                 print(f'{Fore.RED}Failed to reload {extension}')
-                await sendtologs(self, type='error', msg=e)
+                await sendtologs(self.bot, type='error', msg=e)
 
     @commands.command(name='Cogs', hidden=True)
     @commands.is_owner()
