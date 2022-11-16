@@ -11,7 +11,7 @@ class CatAPI(commands.Cog):
 
     # {"breeds":[],"id":"bq4","url":"https://cdn2.thecatapi.com/images/bq4.jpg","width":600,"height":800}
 
-    @commands.hybrid_command(name='Cat')
+    @commands.hybrid_command(name='cat', with_app_command=True)
     @commands.guild_only()
     async def _cat(self, ctx):
         """Get stats on cats."""
