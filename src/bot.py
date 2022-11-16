@@ -44,7 +44,6 @@ class Slatt(commands.Bot):
         self.client_key = 1040566823579566160
 
     async def setup_hook(self) -> None:
-        self.session = aiohttp.ClientSession()
         self.owner_ids = [168376879479390208, 459439879269646358, 876344421656981544, 948796139954655235]
 
         for extension in initial_extensions:
@@ -74,7 +73,6 @@ class Slatt(commands.Bot):
 
     async def close(self) -> None:
         await super().close()
-        await self.session.close()
 
     async def start(self) -> None:
         await super().start(config("CLEO_TOKEN"), reconnect=True)
