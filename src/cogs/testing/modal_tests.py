@@ -38,7 +38,7 @@ class Buttons(discord.ui.View):
         await interaction.response.send_modal(TestM())
 
 
-class Test(commands.Cog):
+class ModelTesting(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -47,4 +47,4 @@ class Test(commands.Cog):
         await ctx.reply('Message with a button', view=Buttons())
 
 async def setup(bot):
-    await bot.add_cog(Test(bot))
+    await bot.add_cog(ModelTesting(bot))

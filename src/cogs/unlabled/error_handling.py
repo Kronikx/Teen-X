@@ -1,33 +1,12 @@
 import discord
 
 from discord.ext import commands
-from colorama import init, Fore
-from utils.functions import sendtologs
+from ext.functions import sendtologs
 
-init(autoreset=True)
 
-class Events(commands.Cog):
-    """All bot events."""
+class ErrorHandling(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_message_edit(self, before = discord.Message, after = discord.Message):
-        if after.embeds or before.embeds:
-            return
-        if after.author.id == before.author.id:
-            return await self.bot.process_commands(after)
-
-
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild):
-        await sendtologs(self.bot, type='guild', msg=f'Joined a new guild {guild.name}({guild.id})')
-
-
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild):
-        await sendtologs(self.bot, type='guild', msg=f'Left guild {guild.name}({guild.id})')
-
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -77,9 +56,8 @@ class Events(commands.Cog):
         )
         await ctx.send(embed = discord.Embed(description = f"`{error}`",
                                              color = discord.Colour.red()))
-        print(f"{Fore.RED}[Error] {error}")
         await sendtologs(self, type='error', msg=error)
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(Events(bot))
+    await bot.add_cog(ErrorHandling(bot))

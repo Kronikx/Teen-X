@@ -1,16 +1,32 @@
+import time
 import discord
 
 from discord.ext import commands
-from colorama import init, Fore
-
-init(autoreset=True)
+from ext.functions import sendtologs
 
 class Users(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+
+    @commands.hybrid_command(name="ping", with_app_command=True)
+    async def _ping(self, ctx):
+        """Display the bots ping."""
+        try:
+            t_1 = time.perf_counter()
+            await ctx.channel.typing() # Getting API ping
+            t_2 = time.perf_counter()
+        except Exception as e:
+            await sendtologs(self.bot, type='error', msg=e)
+            pass
+
+        api_ping = round((t_2-t_1)*1000)
+        web_ping = round(self.bot.latency*1000)
+
+        await ctx.reply(f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
     
-    @commands.hybrid_command(name='avatar', description='Display someones avatar.', aliases=['av', 'pfp'],  with_app_command=True)
+    @commands.hybrid_command(name='avatar', aliases=['av', 'pfp'],  with_app_command=True)
     async def _avatar(self, ctx, usr: discord.User = None):
+        """Display someones avatar."""
         if usr == None:
             usr = ctx.author
         if usr.avatar:
@@ -26,12 +42,12 @@ class Users(commands.Cog):
             defav.set_image(url=def_av)
             await ctx.reply(embed=defav)
 
-    @commands.hybrid_command(name='banner', description='Display someones banner.', aliases=['ub', 'userbanner'], with_app_command=True)
+    @commands.hybrid_command(name='banner', aliases=['ub', 'userbanner'], with_app_command=True)
     async def _banner(self, ctx, usr: discord.User = None):
+        """Display someones banner."""
         if usr == None:
             usr = ctx.author
         usr = await self.bot.fetch_user(usr.id)
-        print(f'{Fore.GREEN}Succesfully fetched user: {usr}')
         if usr.banner:
             em = discord.Embed(color=0x2f3136)
             em.set_author(name=f"{usr.name}'s banner", url=usr.banner.url)
@@ -40,8 +56,9 @@ class Users(commands.Cog):
         else:
             await ctx.reply(f'{usr} has no banner.')
 
-    @commands.hybrid_command(name="serveravatar", description='Gives you a user\'s guild avatar if available.', aliases=['sav'], with_app_command=True)
+    @commands.hybrid_command(name="serveravatar", aliases=['sav'], with_app_command=True)
     async def _serveravatar(self, ctx, *, member: discord.Member = None):
+        """Gives you a user's guild avatar if available."""
         if member == None:
             member = ctx.author
         if member.guild_avatar == None:
@@ -52,8 +69,9 @@ class Users(commands.Cog):
             av.set_image(url=member.guild_avatar)
             await ctx.reply(embed=av)
 
-    @commands.hybrid_command(name="whois", description='Find information about a user.', aliases=['ui', 'userinfo'])
+    @commands.hybrid_command(name="whois",  aliases=['ui', 'userinfo'])
     async def _whois(self, ctx, usr: discord.User = None):
+        """Find information about a user."""
         if usr == None:
             usr = ctx.author
         em=discord.Embed(description=f'{usr}(`{usr.id}`)', color=0x2f3136)

@@ -32,7 +32,7 @@ class Menu(discord.ui.View):
         self.value = False
         self.stop()
 
-class Test(commands.Cog):
+class ButtonTesting(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -41,4 +41,4 @@ class Test(commands.Cog):
         await ctx.reply("Test Test Test", view=Menu())
 
 async def setup(bot):
-    await bot.add_cog(Test(bot))
+    await bot.add_cog(ButtonTesting(bot))

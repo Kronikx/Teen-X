@@ -1,10 +1,9 @@
-import time
 import discord
 
 from discord import app_commands
 from discord.ext import commands
 
-class Slashs(commands.Cog):
+class SlashCommands(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -20,5 +19,5 @@ class Slashs(commands.Cog):
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(
-        Slashs(bot),
-        guilds = [discord.Object(id = 1037005626112491522)])
+        SlashCommands(bot),
+        guilds = [discord.Object(id = 1037005626112491522), discord.Object(id = 924924186697281567)])
