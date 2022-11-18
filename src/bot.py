@@ -1,11 +1,11 @@
 import os
-import aiohttp
 import asyncio
 import discord
 
 from decouple import config
 from discord.ext import commands
 from ext.functions import sendtologs
+from cogs.admin.owner import owners
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
@@ -44,7 +44,7 @@ class Slatt(commands.Bot):
         self.client_key = 1040566823579566160
 
     async def setup_hook(self) -> None:
-        self.owner_ids = [168376879479390208, 459439879269646358, 876344421656981544, 948796139954655235]
+        self.owner_ids = owners
 
         for extension in initial_extensions:
             try:
