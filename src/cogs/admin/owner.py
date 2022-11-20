@@ -18,7 +18,7 @@ class Owner(commands.Cog):
         else:
             em = discord.Embed(color=0xb6bbf9)
             em.add_field(name='Todo:', value=f'```py\n{todo}\n```')
-            todo_chan = self.bot.get_channel(1039235504207564911)
+            todo_chan = self.bot.get_channel(1043945403483172945)
 
             await todo_chan.send(embed=em)
             await ctx.message.add_reaction('✅')

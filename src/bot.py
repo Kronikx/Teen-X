@@ -8,7 +8,7 @@ from ext.functions import sendtologs
 from cogs.admin.owner import owners
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
-os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing underscores
+os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing Jishaku underscores
 
 initial_extensions = (
     'jishaku',
@@ -51,6 +51,7 @@ class Slatt(commands.Bot):
                 await self.load_extension(extension)
             except Exception as e:
                 # Send to logs or log to console
+                await sendtologs(self.bot, type='error', msg=e)
                 pass
 
     async def on_message(self, message = discord.Message):
@@ -75,7 +76,7 @@ class Slatt(commands.Bot):
         await super().close()
 
     async def start(self) -> None:
-        await super().start(config("CLEO_TOKEN"), reconnect=True)
+        await super().start(config("TOKEN"), reconnect=True)
 
 async def run_bot():
     async with Slatt() as bot:

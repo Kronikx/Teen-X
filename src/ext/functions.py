@@ -1,8 +1,9 @@
 import discord
 
 async def sendtologs(self, type, msg):
-    error_channel = self.get_channel(1037010318544617554)
-    guild_channel = self.get_channel(1040221622826700843)
+    error_channel = self.get_channel(1043940794450595897)
+    guild_channel = self.get_channel(1043940794450595896)
+    # database_channel = self.get_channel(1043940794450595896)
 
     if type == "error":
         eem = discord.Embed(color=0xff0000)
@@ -12,3 +13,7 @@ async def sendtologs(self, type, msg):
         gem = discord.Embed(color=0x800080)
         gem.add_field(name="Guilds", value=f"```\n{msg}\n```")
         await guild_channel.send(embed=gem)
+    # elif type == "database":
+    #     dem = discord.Embed(color=0x800080) # Remember to change this color
+    #     dem.add_field(name="Database", value=f"```\n{msg}\n```")
+    #     await guild_channel.send(embed=dem)
