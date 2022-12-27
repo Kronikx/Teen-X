@@ -11,7 +11,7 @@ os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing Jishaku underscores
 
 initial_extensions = (
-    'jishaku',
+    'cogs.admin.customjsk',
     'cogs.admin.owner',
     'cogs.users.information',
     'cogs.unlabled.error_handling'
