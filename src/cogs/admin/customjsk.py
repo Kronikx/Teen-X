@@ -47,9 +47,10 @@ class CustomDebugCog(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
 
         summary = [
             f"Jishaku v{package_version('jishaku')}, {dist_version}, "
-            f"`Python {sys.version}` on `{sys.platform}`".replace("\n", ""),
+            f"`Python {sys.version[0:6]}` on `{sys.platform}`".replace("\n", ""),
             f"Module was loaded <t:{self.load_time.timestamp():.0f}:R>, "
-            f"cog was loaded <t:{self.start_time.timestamp():.0f}:R>.",
+            f"Cog was loaded <t:{self.start_time.timestamp():.0f}:R>, "
+            f"`{len(self.bot.cogs)}/9` Cogs loaded.",
             f"Developed and managed by {dev}",
             ""
         ]
@@ -62,7 +63,7 @@ class CustomDebugCog(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
                 with proc.oneshot():
                     try:
                         mem = proc.memory_full_info()
-                        summary.append(f"Using {natural_size(mem.rss)} physical memory and "
+                        summary.append(f"Using {natural_size(mem.rss)} physical memory, "
                                        f"{natural_size(mem.vms)} virtual memory, "
                                        f"{natural_size(mem.uss)} of which unique to this process.")
                     except psutil.AccessDenied:
