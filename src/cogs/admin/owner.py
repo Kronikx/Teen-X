@@ -76,7 +76,7 @@ class Owner(commands.Cog):
                 try:
                     await self.bot.load_extension(f'cogs.{ext}')
                 except Exception as e:
-                    await ctx.reply(f'Failed to load {ext}')
+                    await ctx.reply(f'`Failed to load {ext}`')
                     await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Loaded {extension.replace(" ", ", ")}')
@@ -85,7 +85,7 @@ class Owner(commands.Cog):
                 await self.bot.load_extension(f'cogs.{extension}')
                 await ctx.reply(f'`Loaded {extension}`')
             except Exception as e:
-                await ctx.reply(f'Failed to load {extension}')
+                await ctx.reply(f'`Failed to load {extension}`')
                 await sendtologs(self.bot, type='error', msg=e)
 
     @commands.command(name='unload', hidden=True)
@@ -96,7 +96,7 @@ class Owner(commands.Cog):
                 try:
                     await self.bot.unload_extension(f'cogs.{ext}')
                 except Exception as e:
-                    await ctx.reply(f'Failed to unload {ext}')
+                    await ctx.reply(f'`Failed to unload {ext}`')
                     await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Unloaded {extension.replace(" ", ", ")}')
@@ -105,7 +105,7 @@ class Owner(commands.Cog):
                 await self.bot.unload_extension(f'cogs.{extension}')
                 await ctx.reply(f'`Unloaded {extension}`')
             except Exception as e:
-                await ctx.reply(f'Failed to unload {extension}')
+                await ctx.reply(f'`Failed to unload {extension}`')
                 await sendtologs(self.bot, type='error', msg=e)
 
     @commands.command(name='reload', hidden=True)
@@ -116,7 +116,7 @@ class Owner(commands.Cog):
                 try:
                     await self.bot.reload_extension(f'cogs.{ext}')
                 except Exception as e:
-                    await ctx.reply(f'Failed to reload {ext}')
+                    await ctx.reply(f'`Failed to reload {ext}`')
                     await sendtologs(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Reloaded {extension.replace(" ", ", ")}')
@@ -125,7 +125,7 @@ class Owner(commands.Cog):
                 await self.bot.reload_extension(f'cogs.{extension}')
                 await ctx.reply(f'`Reloaded {extension}`')
             except Exception as e:
-                await ctx.reply(f'Failed to reload {extension}')
+                await ctx.reply(f'`Failed to reload {extension}`')
                 await sendtologs(self.bot, type='error', msg=e)
 
 async def setup(bot: commands.Bot) -> None:
