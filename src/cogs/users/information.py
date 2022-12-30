@@ -8,7 +8,7 @@ class Users(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.hybrid_command(name="ping", with_app_command=True)
+    @commands.command(name="ping")
     async def _ping(self, ctx):
         """Display the bots ping."""
         try:
@@ -20,11 +20,11 @@ class Users(commands.Cog):
             pass
 
         api_ping = round((t_2-t_1)*1000)
-        web_ping = round(self.bot.latency*1000)
+        web_ping = round(self.bot.latency * 1000, 2)
 
         await ctx.reply(f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
     
-    @commands.hybrid_command(name='avatar', aliases=['av', 'pfp'],  with_app_command=True)
+    @commands.command(name='avatar', aliases=['av', 'pfp'])
     async def _avatar(self, ctx, usr: discord.User = None):
         """Display someones avatar."""
         if usr == None:
@@ -42,7 +42,7 @@ class Users(commands.Cog):
             defav.set_image(url=def_av)
             await ctx.reply(embed=defav)
 
-    @commands.hybrid_command(name='banner', aliases=['ub', 'userbanner'], with_app_command=True)
+    @commands.command(name='banner', aliases=['ub', 'userbanner'])
     async def _banner(self, ctx, usr: discord.User = None):
         """Display someones banner."""
         if usr == None:
@@ -56,7 +56,7 @@ class Users(commands.Cog):
         else:
             await ctx.reply(f'{usr} has no banner.')
 
-    @commands.hybrid_command(name="serveravatar", aliases=['sav'], with_app_command=True)
+    @commands.command(name="serveravatar", aliases=['sav'])
     async def _serveravatar(self, ctx, *, member: discord.Member = None):
         """Gives you a user's guild avatar if available."""
         if member == None:
