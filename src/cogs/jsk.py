@@ -18,7 +18,7 @@ try:
 except ImportError:
     from importlib_metadata import distribution, packages_distributions  # type: ignore
 
-class CustomDebugCog(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
+class CustomJishaku(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
     
     @Feature.Command(name="jishaku", aliases=["jsk"], invoke_without_command=True, ignore_extra=False)
     async def jsk(self, ctx: commands.Context):
@@ -50,7 +50,7 @@ class CustomDebugCog(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
             f"`Python {sys.version[0:6]}` on `{sys.platform}`".replace("\n", ""),
             f"Module was loaded <t:{self.load_time.timestamp():.0f}:R>, "
             f"Cog was loaded <t:{self.start_time.timestamp():.0f}:R>, "
-            f"`{len(self.bot.cogs)}/9` Cogs loaded.",
+            f"`{len(self.bot.cogs)}/5` Cogs loaded.",
             f"Developed and managed by {dev}",
             ""
         ]
@@ -142,4 +142,4 @@ class CustomDebugCog(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
         await ctx.send("\n".join(summary))
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(CustomDebugCog(bot=bot))
+    await bot.add_cog(CustomJishaku(bot=bot))

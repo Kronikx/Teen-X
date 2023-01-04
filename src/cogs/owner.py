@@ -2,9 +2,40 @@ import discord
 
 from discord.ext import commands
 from typing import Optional, Literal
-from ext.functions import sendtologs
+from cogs.functions import sendtologs
 
 owners = [168376879479390208, 459439879269646358, 876344421656981544, 948796139954655235, 896075048228634655, 756297040014606345]
+
+class Completed(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.value = None
+
+    @discord.ui.button(label='Completed', style=discord.ButtonStyle.green, custom_id='todo2:1', emoji="✅", disabled=True)
+    async def complete(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+class Canceled(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.value = None
+
+    @discord.ui.button(label='Canceled', style=discord.ButtonStyle.grey, custom_id='todo2:1', emoji="❌", disabled=True)
+    async def complete(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+class Todo(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.value = None
+
+    @discord.ui.button(label='Complete', style=discord.ButtonStyle.green, custom_id='todo:1', emoji="✅")
+    async def complete(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(view=Completed())
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey, custom_id='todo:2', emoji="❌")
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(view=Canceled())
 
 class Owner(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
@@ -20,7 +51,7 @@ class Owner(commands.Cog):
             em.add_field(name='Todo:', value=f'```py\n{todo}\n```')
             todo_chan = self.bot.get_channel(1043945403483172945)
 
-            await todo_chan.send(embed=em)
+            await todo_chan.send(embed=em, view=Todo())
             await ctx.message.add_reaction('✅')
 
     @commands.command(name='cogs', hidden=True)

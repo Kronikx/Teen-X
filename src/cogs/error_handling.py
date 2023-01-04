@@ -1,7 +1,7 @@
 import discord
 
 from discord.ext import commands
-from ext.functions import sendtologs
+from cogs.functions import sendtologs
 
 
 class ErrorHandling(commands.Cog):

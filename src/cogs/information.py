@@ -2,7 +2,7 @@ import time
 import discord
 
 from discord.ext import commands
-from ext.functions import sendtologs
+from cogs.functions import sendtologs
 
 class Users(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
