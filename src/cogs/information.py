@@ -4,6 +4,10 @@ import discord
 from discord.ext import commands
 from cogs.functions import sendtologs
 
+class Buttons(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=200)
+
 class Users(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -25,36 +29,37 @@ class Users(commands.Cog):
         await ctx.reply(f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
     
     @commands.command(name='avatar', aliases=['av', 'pfp'])
-    async def _avatar(self, ctx, usr: discord.User = None):
+    async def _avatar(self, ctx, user: discord.User = None):
         """Display someones avatar."""
-        if usr == None:
-            usr = ctx.author
-        if usr.avatar:
-            def__av = usr.avatar
-            av=discord.Embed(color=0x2f3136)
-            av.set_author(name=f"{usr}'s avatar", url=def__av)
-            av.set_image(url=def__av)
-            await ctx.reply(embed=av)
-        else:
-            def_av = usr.default_avatar
-            defav=discord.Embed(color=0x2f3136)
-            defav.set_author(name=f"{usr}'s avatar", url=def_av)
-            defav.set_image(url=def_av)
-            await ctx.reply(embed=defav)
+        if user == None:
+            user = ctx.author
+
+        link = user.avatar if user.avatar else user.default_avatar
+
+        em=discord.Embed(color=ctx.author.color)
+        em.set_author(name=f"{user}'s avatar", url=link.url)
+        em.set_image(url=link.url)
+
+        view = Buttons()
+        view.add_item(discord.ui.Button(label="Image URL", style=discord.ButtonStyle.link, url=link.url))
+        await ctx.reply(embed=em, view=view)
 
     @commands.command(name='banner', aliases=['ub', 'userbanner'])
-    async def _banner(self, ctx, usr: discord.User = None):
+    async def _banner(self, ctx, user: discord.User = None):
         """Display someones banner."""
-        if usr == None:
-            usr = ctx.author
-        usr = await self.bot.fetch_user(usr.id)
-        if usr.banner:
-            em = discord.Embed(color=0x2f3136)
-            em.set_author(name=f"{usr.name}'s banner", url=usr.banner.url)
-            em.set_image(url=usr.banner.url)
-            await ctx.reply(embed=em)
+        if user == None:
+            user = ctx.author
+        user = await self.bot.fetch_user(user.id)
+        if user.banner:
+            em = discord.Embed(color=ctx.author.color)
+            em.set_author(name=f"{user.name}'s banner", url=user.banner.url)
+            em.set_image(url=user.banner.url)
+
+            view = Buttons()
+            view.add_item(discord.ui.Button(label="Image URL", style=discord.ButtonStyle.link, url=user.banner.url))
+            await ctx.reply(embed=em, view=view)
         else:
-            await ctx.reply(f'{usr} has no banner.')
+            await ctx.reply(f'{user} has no banner.')
 
     @commands.command(name="serveravatar", aliases=['sav'])
     async def _serveravatar(self, ctx, *, member: discord.Member = None):
@@ -64,29 +69,41 @@ class Users(commands.Cog):
         if member.guild_avatar == None:
             await ctx.reply(f'{member.mention} has no Server Avatar.')
         else:
-            av=discord.Embed(color=0x2f3136)
+            av=discord.Embed(color=ctx.author.color)
             av.set_author(name=f"{member}'s server avatar", url=member.guild_avatar, icon_url=member.display_avatar)
             av.set_image(url=member.guild_avatar)
-            await ctx.reply(embed=av)
+
+            view = Buttons()
+            view.add_item(discord.ui.Button(label="Image URL", style=discord.ButtonStyle.link, url=member.guild_avatar.url))
+            await ctx.reply(embed=av, view=view)
 
     @commands.hybrid_command(name="whois",  aliases=['ui', 'userinfo'])
-    async def _whois(self, ctx, usr: discord.User = None):
-        """Find information about a user."""
-        if usr == None:
-            usr = ctx.author
-        em=discord.Embed(description=f'{usr}(`{usr.id}`)', color=0x2f3136)
-        if usr.bot == True: 
-            em.add_field(name="Profile", value=f'`Name:` {usr.name}\n`Discrim:` #{usr.discriminator}\n`Bot:` <:The_greenTick:985459545033818112>', inline=True)
-        else:
-            em.add_field(name="Profile", value=f'`Name:` {usr.name}\n`Discrim:` #{usr.discriminator}\n`Bot:` <:the_wrong:984091444774060042>', inline=True)
-        if usr.avatar:
-            em.set_thumbnail(url=usr.avatar)
-        else:
-            em.set_thumbnail(url=usr.default_avatar)
-        em.set_author(name=f"{ctx.author}", icon_url=ctx.author.avatar.url, url=f"https://discord.com/users/{usr.id}")
-        em.add_field(name='Created:',value=f'<t:{int(usr.created_at.timestamp())}:d>(<t:{int(usr.created_at.timestamp())}:R>)', inline=True)
-        em.set_footer(text=f"{len(usr.mutual_guilds)} mutual guilds.") if usr.mutual_guilds else None
-        await ctx.reply(embed=em)
+    async def _whois(self, ctx, user: discord.User = None):
+        """Find information about a member."""
+        if user is None:
+            user = ctx.author
+        member = ctx.guild.get_member(user.id)
+        # Information variables
+        bot = True if user.bot else False
+        Mutuals = len(user.mutual_guilds) if user.mutual_guilds else 0
+
+        # Guild Variables
+        if member is not None:
+            joined = f"<t:{int(ctx.author.joined_at.timestamp())}:d>(<t:{int(ctx.author.joined_at.timestamp())}:R>)"
+            pos = sum(m.joined_at < member.joined_at for m in ctx.guild.members if m.joined_at is not None)
+            roles = []
+            for role in member.roles:
+                roles.append(role)
+            perms_value = member.guild_permissions
+            
+
+        em = discord.Embed(description=f"**User Information:** {user.mention}", color=ctx.author.color)
+        em.set_thumbnail(url=user.display_avatar)
+        em.add_field(name="Information", value=f"**Name:** `{user}`\n**ID:** `{user.id}`\n**Is Bot:** `{bot}`\n**Created:** <t:{int(user.created_at.timestamp())}:R>\n**Guilds:** `{Mutuals} Shared`", inline=True)
+        em.add_field(name="Guild Related", value=f"**Joined:** <t:{int(ctx.author.joined_at.timestamp())}:R>\n**Join Pos:** `{pos}/{len(ctx.guild.members)}`\n**Top Role:** @{roles[1]}\n**Color:** `{member.color}`\n**Perms:** `{member.guild_permissions}`", inline=True) if member else None
+
+        await ctx.send(embed=em)
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(
