@@ -86,22 +86,17 @@ class Users(commands.Cog):
         # Information variables
         bot = True if user.bot else False
         Mutuals = len(user.mutual_guilds) if user.mutual_guilds else 0
-
         # Guild Variables
         if member is not None:
-            joined = f"<t:{int(ctx.author.joined_at.timestamp())}:d>(<t:{int(ctx.author.joined_at.timestamp())}:R>)"
             pos = sum(m.joined_at < member.joined_at for m in ctx.guild.members if m.joined_at is not None)
             roles = []
             for role in member.roles:
-                roles.append(role)
-            perms_value = member.guild_permissions
-            
+                roles.append(role.mention)
 
         em = discord.Embed(description=f"**User Information:** {user.mention}", color=ctx.author.color)
         em.set_thumbnail(url=user.display_avatar)
         em.add_field(name="Information", value=f"**Name:** `{user}`\n**ID:** `{user.id}`\n**Is Bot:** `{bot}`\n**Created:** <t:{int(user.created_at.timestamp())}:R>\n**Guilds:** `{Mutuals} Shared`", inline=True)
-        em.add_field(name="Guild Related", value=f"**Joined:** <t:{int(ctx.author.joined_at.timestamp())}:R>\n**Join Pos:** `{pos}/{len(ctx.guild.members)}`\n**Top Role:** @{roles[1]}\n**Color:** `{member.color}`\n**Perms:** `{member.guild_permissions}`", inline=True) if member else None
-
+        em.add_field(name="Guild Related", value=f"**Joined:** <t:{int(ctx.author.joined_at.timestamp())}:R>\n**Join Pos:** `{pos}/{len(ctx.guild.members)}`\n**Top Role:** {roles[1]}\n**Color:** `{member.color}`", inline=True) if member else None
         await ctx.send(embed=em)
 
 
