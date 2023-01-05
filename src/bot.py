@@ -37,7 +37,7 @@ class Slatt(commands.Bot):
             intents = intents,
             case_insensitive = True,
             application_id = 1040566823579566160,
-            chunk_guilds_at_startup=False,
+            chunk_guilds_at_startup=True,
             heartbeat_timeout=150.0,
             enable_debug_events=True,
         )

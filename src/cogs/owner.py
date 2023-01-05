@@ -1,8 +1,8 @@
 import discord
 
 from discord.ext import commands
-from typing import Optional, Literal
 from cogs.embeds import sendtologs
+from ext.Paginator.paginator import PaginatorView
 
 owners = [896075048228634655, 168376879479390208, 756297040014606345]
 
@@ -66,38 +66,18 @@ class Owner(commands.Cog):
         eend = end.replace(' ', ', ')
         await ctx.reply(f'List of loaded cogs: `{eend}({len(self.bot.cogs)})`')
 
-    @commands.command(hidden=True)
-    @commands.guild_only()
-    @commands.is_owner()
-    async def sync(self, ctx, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None) -> None:
-        if not guilds:
-            if spec == "~":
-                synced = await self.bot.tree.sync(guild=ctx.guild)
-            elif spec == "*":
-                self.bot.tree.copy_global_to(guild=ctx.guild)
-                synced = await self.bot.tree.sync(guild=ctx.guild)
-            elif spec == "^":
-                self.bot.tree.clear_commands(guild=ctx.guild)
-                await self.bot.tree.sync(guild=ctx.guild)
-                synced = []
-            else:
-                synced = await self.bot.tree.sync()
+    @commands.command()
+    async def guilds(self, ctx):
+        embeds = []
+        for guilds in discord.utils.as_chunks(self.bot.guilds, 1):
+            embed = discord.Embed(title="List of all guilds")
+            for g in guilds:
+                embed.set_thumbnail(url=g.icon) if g.icon else None
+                embed.add_field(name=f"Guild Information", value=f"**Owner:** {g.owner.mention}\n**Guild ID:** `{g.id}`\n**Created:** `{g.created_at}`\n**Roles:** `{len(g.roles)}`\n**Humans:** `{len([m for m in g.members if not m.bot])}`\n**Bots:** `{len([m for m in g.members if m.bot])}`")
+            embeds.append(embed)
 
-            await ctx.send(
-                f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
-            )
-            return
-
-        ret = 0
-        for guild in guilds:
-            try:
-                await self.bot.tree.sync(guild=guild)
-            except discord.HTTPException:
-                pass
-            else:
-                ret += 1
-
-        await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
+        view = PaginatorView(embeds)
+        await ctx.send(embed=view.initial, view=view)
 
     @commands.command(name='load', hidden=True)
     @commands.is_owner()
