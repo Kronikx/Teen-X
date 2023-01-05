@@ -2,9 +2,9 @@ import discord
 
 from discord.ext import commands
 from typing import Optional, Literal
-from cogs.functions import sendtologs
+from cogs.embeds import sendtologs
 
-owners = [168376879479390208, 459439879269646358, 876344421656981544, 948796139954655235, 896075048228634655, 756297040014606345]
+owners = [896075048228634655, 168376879479390208, 756297040014606345]
 
 class Completed(discord.ui.View):
     def __init__(self):

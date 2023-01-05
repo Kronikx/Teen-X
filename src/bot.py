@@ -4,7 +4,7 @@ import discord
 
 from decouple import config
 from discord.ext import commands
-from cogs.functions import sendtologs
+from cogs.embeds import sendtologs
 from cogs.owner import owners, Todo
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone

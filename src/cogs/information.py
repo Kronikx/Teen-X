@@ -2,7 +2,7 @@ import time
 import discord
 
 from discord.ext import commands
-from cogs.functions import sendtologs
+from cogs.embeds import sendtologs
 
 class Buttons(discord.ui.View):
     def __init__(self):
@@ -101,6 +101,4 @@ class Users(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(
-        Users(bot),
-        guilds= [discord.Object(id = 1037005626112491522), discord.Object(id = 924924186697281567)])
+    await bot.add_cog(Users(bot))
