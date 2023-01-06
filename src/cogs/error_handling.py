@@ -1,8 +1,7 @@
 import discord
 
 from discord.ext import commands
-from cogs.embeds import sendtologs
-
+from cogs.embeds import Embeds, loggingEmbed
 
 class ErrorHandling(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
@@ -10,6 +9,8 @@ class ErrorHandling(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        embeds = Embeds()
+
         ignored = (commands.CommandNotFound, commands.TooManyArguments)
         send_embed = (commands.MissingPermissions, commands.DisabledCommand, discord.HTTPException, commands.NotOwner,
                       commands.CheckFailure, commands.MissingRequiredArgument, commands.BadArgument,
@@ -41,23 +42,17 @@ class ErrorHandling(commands.Cog):
                 if not efd:
                     err = str(error)
 
-            em = discord.Embed(description = f"{str(err)}", color = discord.Colour.red())
+            embed = embeds.error(str(err))
             try:
-                await ctx.send(embed = em)
+                await ctx.send(embed = embed)
                 return
             except discord.Forbidden:
                 pass
 
         # when error is not handled above
-        em = discord.Embed(
-            title = 'Bot Error:',
-            description = f'```py\n{error}\n```',
-            color = discord.Colour.red()
-        )
-        await ctx.send(embed = discord.Embed(description = f"`{error}`",
-                                             color = discord.Colour.red()))
-        await sendtologs(self, type='error', msg=error)
-
+        em = embeds.unhandled()
+        await ctx.send(embed = em)
+        await loggingEmbed(self.bot, type='error', msg=error)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(ErrorHandling(bot))

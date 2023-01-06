@@ -1,31 +1,32 @@
 import discord
 
 from discord.ext import commands
+from cogs.embeds import Embeds, loggingEmbed
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.embeds = Embeds()
 
     @commands.command(name="nickname", aliases=['nick'])
     @commands.bot_has_guild_permissions(manage_nicknames=True)
     @commands.has_guild_permissions(manage_nicknames=True)
-    async def _nick(self, ctx, member: discord.Member = None, nickname: str = None):
+    async def _nick(self, ctx, member: discord.Member = None, *, nickname: str = None):
         """Change a users nickname."""
         if member is None:
             member = ctx.author
 
-        try:
-            if nickname is None:
-                if member.nick != None:
-                    await member.edit(nick=None)
-                    await ctx.send(f"Reset {member.mention}'s nickname")
-                else:
-                    await ctx.send("No nickname provided.")
+        if nickname is None:
+            if member.nick != None:
+                await member.edit(nick=None)
+                embed = self.embeds.success(f"Reset {member.mention}'s nickname")
             else:
-                await member.edit(nick=nickname)
-                await ctx.send(f"Set {member.mention} nickname to: {nickname}")
-        except discord.Forbidden:
-            await ctx.send(f"You do not have the required permissions to edit this user's nickname")
+                embed = self.embeds.error(f"`nickname` is a required argument!")
+        else:
+            await member.edit(nick=nickname)
+            embed = self.embeds.success(f"Set {member.mention} nickname to: {nickname}")
+
+        await ctx.send(embed = embed)
 
     @commands.command(name="cleanup", aliases=['bc'])
     @commands.has_guild_permissions(manage_messages=True)

@@ -2,7 +2,7 @@ import time
 import discord
 
 from discord.ext import commands
-from cogs.embeds import sendtologs
+from cogs.embeds import Embeds, loggingEmbed
 
 class Buttons(discord.ui.View):
     def __init__(self):
@@ -11,6 +11,7 @@ class Buttons(discord.ui.View):
 class Users(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.embeds = Embeds()
 
     @commands.command(name="ping")
     async def _ping(self, ctx):
@@ -20,7 +21,7 @@ class Users(commands.Cog):
             await ctx.channel.typing() # Getting API ping
             t_2 = time.perf_counter()
         except Exception as e:
-            await sendtologs(self.bot, type='error', msg=e)
+            await loggingEmbed(self.bot, type='error', msg=e)
             pass
 
         api_ping = round((t_2-t_1)*1000)

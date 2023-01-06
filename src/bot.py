@@ -4,7 +4,7 @@ import discord
 
 from decouple import config
 from discord.ext import commands
-from cogs.embeds import sendtologs
+from cogs.embeds import Embeds, loggingEmbed
 from cogs.owner import owners, Todo
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
@@ -43,9 +43,11 @@ class Slatt(commands.Bot):
         )
 
         self.client_key = 1040566823579566160
+        self.embeds = Embeds()
 
     async def setup_hook(self) -> None:
         self.owner_ids = owners
+        
 
         self.add_view(Todo())
 
@@ -54,7 +56,7 @@ class Slatt(commands.Bot):
                 await self.load_extension(extension)
             except Exception as e:
                 # Send to logs or log to console
-                await sendtologs(self.bot, type='error', msg=e)
+                await loggingEmbed(self, type='error', msg=e)
                 pass
 
     async def on_message(self, message = discord.Message):
@@ -67,10 +69,10 @@ class Slatt(commands.Bot):
             return await self.process_commands(after)
 
     async def on_guild_add(self, guild):
-        await sendtologs(self.bot, type='guild', msg=f'Joined guild {guild.name}({guild.id})')
+        await loggingEmbed(self, type='guild', msg=f'Joined guild {guild.name}({guild.id})')
 
     async def on_guild_remove(self, guild):
-        await sendtologs(self.bot, type='guild', msg=f'Left guild {guild.name}({guild.id})')
+        await loggingEmbed(self, type='guild', msg=f'Left guild {guild.name}({guild.id})')
 
     async def on_ready(self):
         print(f'Ready: {self.user} (ID: {self.user.id})')
