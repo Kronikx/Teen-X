@@ -75,7 +75,7 @@ class Owner(commands.Cog):
             embed = discord.Embed(title="List of all guilds")
             for g in guilds:
                 embed.set_thumbnail(url=g.icon) if g.icon else None
-                embed.add_field(name=f"Guild Information", value=f"**Owner:** {g.owner.mention}\n**Guild ID:** `{g.id}`\n**Created:** `{g.created_at}`\n**Roles:** `{len(g.roles)}`\n**Humans:** `{len([m for m in g.members if not m.bot])}`\n**Bots:** `{len([m for m in g.members if m.bot])}`")
+                embed.add_field(name=f"Guild Information", value=f"**Owner:** {g.owner.mention}\n**Guild ID:** `{g.id}`\n**Created:** <t:{int(g.created_at.timestamp())}:R>\n**Roles:** `{len(g.roles)}`\n**Humans:** `{len([m for m in g.members if not m.bot])}`\n**Bots:** `{len([m for m in g.members if m.bot])}`")
             embeds.append(embed)
 
         view = PaginatorView(embeds)
