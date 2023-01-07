@@ -1,7 +1,7 @@
 import discord
 
+from cogs.embeds import Embeds
 from discord.ext import commands
-from cogs.embeds import Embeds, loggingEmbed
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -49,7 +49,7 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         await ctx.channel.purge(limit=amount, bulk=True)
 
-    @_purge.command(name="after")
+    @_purge.command(name="after", aliases = ['upto'], invoke_without_command=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.has_guild_permissions(manage_messages=True)
     async def _after(self, ctx, after: discord.Message = None):
@@ -58,7 +58,7 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         await ctx.channel.purge(limit=None, after=after, bulk=True)
 
-    @_purge.command(name="between")
+    @_purge.command(name="between", invoke_without_command=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.has_guild_permissions(manage_messages=True)
     async def _between(self, ctx, start: discord.Message = None, end: discord.Message = None):
@@ -67,7 +67,7 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         await ctx.channel.purge(limit=None, after=start, before=end, bulk=True)
 
-    @_purge.command(name="before")
+    @_purge.command(name="before", invoke_without_command=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.has_guild_permissions(manage_messages=True)
     async def _before(self, ctx, before: discord.Message = None):

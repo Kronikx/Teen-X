@@ -1,7 +1,7 @@
 import discord
 
 from discord.ext import commands
-from cogs.embeds import Embeds, loggingEmbed
+from cogs.embeds import Embeds
 from ext.Paginator.paginator import PaginatorView
 
 owners = [896075048228634655, 168376879479390208, 756297040014606345]
@@ -90,7 +90,7 @@ class Owner(commands.Cog):
                     await self.bot.load_extension(f'cogs.{ext}')
                 except Exception as e:
                     await ctx.reply(f'`Failed to load {ext}`')
-                    await loggingEmbed(self.bot, type='error', msg=e)
+                    # await loggingEmbed(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Loaded {extension.replace(" ", ", ")}')
         else:
@@ -99,7 +99,7 @@ class Owner(commands.Cog):
                 await ctx.reply(f'`Loaded {extension}`')
             except Exception as e:
                 await ctx.reply(f'`Failed to load {extension}`')
-                await loggingEmbed(self.bot, type='error', msg=e)
+                # await loggingEmbed(self.bot, type='error', msg=e)
 
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
@@ -110,7 +110,7 @@ class Owner(commands.Cog):
                     await self.bot.unload_extension(f'cogs.{ext}')
                 except Exception as e:
                     await ctx.reply(f'`Failed to unload {ext}`')
-                    await loggingEmbed(self.bot, type='error', msg=e)
+                    # await loggingEmbed(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Unloaded {extension.replace(" ", ", ")}')
         else:
@@ -119,7 +119,7 @@ class Owner(commands.Cog):
                 await ctx.reply(f'`Unloaded {extension}`')
             except Exception as e:
                 await ctx.reply(f'`Failed to unload {extension}`')
-                await loggingEmbed(self.bot, type='error', msg=e)
+                # await loggingEmbed(self.bot, type='error', msg=e)
 
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
@@ -130,7 +130,7 @@ class Owner(commands.Cog):
                     await self.bot.reload_extension(f'cogs.{ext}')
                 except Exception as e:
                     await ctx.reply(f'`Failed to reload {ext}`')
-                    await loggingEmbed(self.bot, type='error', msg=e)
+                    # await loggingEmbed(self.bot, type='error', msg=e)
                     continue
             await ctx.reply(f'Reloaded {extension.replace(" ", ", ")}')
         else:
@@ -139,7 +139,7 @@ class Owner(commands.Cog):
                 await ctx.reply(f'`Reloaded {extension}`')
             except Exception as e:
                 await ctx.reply(f'`Failed to reload {extension}`')
-                await loggingEmbed(self.bot, type='error', msg=e)
+                # await loggingEmbed(self.bot, type='error', msg=e)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Owner(bot))

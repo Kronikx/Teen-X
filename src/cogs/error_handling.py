@@ -1,7 +1,7 @@
 import discord
 
+from cogs.embeds import Embeds
 from discord.ext import commands
-from cogs.embeds import Embeds, loggingEmbed
 
 class ErrorHandling(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
@@ -52,7 +52,6 @@ class ErrorHandling(commands.Cog):
         # when error is not handled above
         em = embeds.unhandled()
         await ctx.send(embed = em)
-        await loggingEmbed(self.bot, type='error', msg=error)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(ErrorHandling(bot))
