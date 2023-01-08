@@ -8,7 +8,7 @@ class PaginatorView(discord.ui.View):
         self,
         embeds: List[discord.Embed]
     ) -> None:
-        super().__init__(timeout=300)
+        super().__init__(timeout=180)
 
         self._embeds = embeds
         self._queue = deque(embeds)

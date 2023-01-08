@@ -1,14 +1,11 @@
 import os
-import json
 import asyncio
 import discord
 
 from cogs.owner import Todo
+from decouple import config
 from cogs.embeds import Embeds
 from discord.ext import commands
-
-with open('config.json') as config:
-    data = json.load(config)
 
 os.environ.setdefault("JISHAKU_HIDE", "1") # Hiding Jishaku from everyone
 os.environ.setdefault("JISHAKU_NO_UNDERSCORE", "1") # Removing Jishaku underscores
@@ -35,7 +32,7 @@ class Slatt(commands.Bot):
             message_content=True,
         )
         super().__init__(
-            command_prefix= commands.when_mentioned_or(','),
+            command_prefix= commands.when_mentioned_or('.'),
             mentions = allowed_mentions,
             intents = intents,
             case_insensitive = True,
@@ -49,6 +46,8 @@ class Slatt(commands.Bot):
     async def setup_hook(self) -> None:
         self.add_view(Todo())
 
+        self.bot_app_info = await self.application_info()
+
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
@@ -56,6 +55,10 @@ class Slatt(commands.Bot):
                 # Send to logs or log to console
                 # await loggingEmbed(self, type='error', msg=e)
                 pass
+
+    @property
+    def owner(self) -> discord.User:
+        return self.bot_app_info.owner
 
     async def on_message(self, message = discord.Message):
         await self.process_commands(message)
@@ -73,7 +76,7 @@ class Slatt(commands.Bot):
         await super().close()
 
     async def start(self) -> None:
-        await super().start(data['token'], reconnect=True)
+        await super().start(config("TOKEN"), reconnect=True)
 
 async def run_bot():
     async with Slatt() as bot:

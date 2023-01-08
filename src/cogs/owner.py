@@ -4,8 +4,6 @@ from discord.ext import commands
 from cogs.embeds import Embeds
 from ext.Paginator.paginator import PaginatorView
 
-owners = [896075048228634655, 168376879479390208, 756297040014606345]
-
 class Completed(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -72,8 +70,12 @@ class Owner(commands.Cog):
     async def _guilds(self, ctx):
         embeds = []
         for guilds in discord.utils.as_chunks(self.bot.guilds, 1):
-            embed = discord.Embed(title="List of all guilds")
             for g in guilds:
+                for channel in g.channels:
+                    if type(channel) == discord.channel.TextChannel:
+                        invite = await channel.create_invite()
+                        break
+                embed = discord.Embed(title="List of all guilds", description=f'[{g.name[:1].upper()}{g.name[0:]}]({invite})')
                 embed.set_thumbnail(url=g.icon) if g.icon else None
                 embed.add_field(name=f"Guild Information", value=f"**Owner:** {g.owner.mention}\n**Guild ID:** `{g.id}`\n**Created:** <t:{int(g.created_at.timestamp())}:R>\n**Roles:** `{len(g.roles)}`\n**Humans:** `{len([m for m in g.members if not m.bot])}`\n**Bots:** `{len([m for m in g.members if m.bot])}`")
             embeds.append(embed)
