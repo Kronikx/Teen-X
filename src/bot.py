@@ -2,7 +2,6 @@ import os
 import asyncio
 import discord
 
-from cogs.owner import Todo
 from decouple import config
 from cogs.embeds import Embeds
 from discord.ext import commands
@@ -14,8 +13,7 @@ initial_extensions = (
     'cogs.jsk',
     'cogs.owner',
     'cogs.moderation',
-    'cogs.information',
-    'cogs.error_handling'
+    'cogs.information'
 )
 
 class Slatt(commands.Bot):
@@ -44,8 +42,6 @@ class Slatt(commands.Bot):
         self.embeds = Embeds()
 
     async def setup_hook(self) -> None:
-        self.add_view(Todo())
-
         self.bot_app_info = await self.application_info()
 
         for extension in initial_extensions:
@@ -68,6 +64,49 @@ class Slatt(commands.Bot):
             return
         if after.author.id == before.author.id:
             return await self.process_commands(after)
+
+    async def on_command_error(self, ctx, error):
+        ignored = (commands.CommandNotFound, commands.TooManyArguments)
+        send_embed = (commands.MissingPermissions, commands.DisabledCommand, discord.HTTPException, commands.NotOwner,
+                      commands.CheckFailure, commands.MissingRequiredArgument, commands.BadArgument,
+                      commands.BadUnionArgument)
+
+        errors = {
+            commands.MissingPermissions: "You do not have the required permissions to use this command.",
+            commands.DisabledCommand: "This command is currently disabled.",
+            discord.HTTPException: "There was an error connecting to Discord. Please try again.",
+            commands.CommandInvokeError: "There was an issue running the command.",
+            commands.NotOwner: "You are not the owner.",
+            commands.CheckFailure: "This command cannot be used in this guild!",
+            commands.MissingRole: "You're missing the **{}** role",
+            commands.MissingRequiredArgument: "`{}` is a required argument!"
+        }
+
+        if isinstance(error, ignored):
+            return
+
+        if isinstance(error, send_embed):
+            if isinstance(error, commands.MissingRequiredArgument):
+                err = errors.get(error.__class__).format(str(error.param).partition(':')[0])
+            elif isinstance(error, commands.MissingRole):
+                role = ctx.guild.get_role(error.missing_role)
+                err = errors.get(error.__class__).format(role.mention)
+            else:
+                efd = errors.get(error.__class__)
+                err = str(efd)
+                if not efd:
+                    err = str(error)
+
+            embed = self.embeds.error(str(err))
+            try:
+                await ctx.send(embed = embed)
+                return
+            except discord.Forbidden:
+                pass
+
+        # when error is not handled above
+        em = self.embeds.unhandled()
+        await ctx.send(embed = em)
 
     async def on_ready(self):
         print(f'Ready: {self.user} (ID: {self.user.id})')

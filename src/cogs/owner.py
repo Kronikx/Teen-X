@@ -39,6 +39,13 @@ class Owner(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
         self.embeds = Embeds()
+        self.todo = Todo(timeout=None)
+
+    async def cog_load(self) -> None:
+        self.bot.add_view(self.todo)
+
+    async def cog_unload(self) -> None:
+        self.todo.stop()
 
     @commands.command(name='todo', hidden=True)
     @commands.is_owner()
@@ -50,7 +57,7 @@ class Owner(commands.Cog):
             em.add_field(name='Todo:', value=f'```py\n{todo}\n```')
             todo_chan = self.bot.get_channel(1043945403483172945)
 
-            await todo_chan.send(embed=em, view=Todo())
+            await todo_chan.send(embed=em, view=self.todo)
             await ctx.message.add_reaction('✅')
 
     @commands.command(name='cogs', hidden=True)
@@ -75,7 +82,7 @@ class Owner(commands.Cog):
                     if type(channel) == discord.channel.TextChannel:
                         invite = await channel.create_invite()
                         break
-                embed = discord.Embed(title="List of all guilds", description=f'[{g.name[:1].upper()}{g.name[0:]}]({invite})')
+                embed = discord.Embed(title="List of all guilds", description=f'[{g.name[:1].upper()}{g.name[1:]}]({invite})')
                 embed.set_thumbnail(url=g.icon) if g.icon else None
                 embed.add_field(name=f"Guild Information", value=f"**Owner:** {g.owner.mention}\n**Guild ID:** `{g.id}`\n**Created:** <t:{int(g.created_at.timestamp())}:R>\n**Roles:** `{len(g.roles)}`\n**Humans:** `{len([m for m in g.members if not m.bot])}`\n**Bots:** `{len([m for m in g.members if m.bot])}`")
             embeds.append(embed)
