@@ -32,7 +32,7 @@ class Slatt(commands.Bot):
             message_content=True,
         )
         super().__init__(
-            command_prefix= commands.when_mentioned_or('.'),
+            command_prefix= commands.when_mentioned_or(','),
             mentions = allowed_mentions,
             intents = intents,
             case_insensitive = True,
