@@ -39,7 +39,7 @@ class Owner(commands.Cog):
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
         self.embeds = Embeds()
-        self.todo = Todo(timeout=None)
+        self.todo = Todo()
 
     async def cog_load(self) -> None:
         self.bot.add_view(self.todo)
