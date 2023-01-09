@@ -50,7 +50,7 @@ class CustomJishaku(*OPTIONAL_FEATURES, *STANDARD_FEATURES):
             f"`Python {sys.version[0:6]}` on `{sys.platform}`".replace("\n", ""),
             f"Module was loaded <t:{self.load_time.timestamp():.0f}:R>, "
             f"Cog was loaded <t:{self.start_time.timestamp():.0f}:R>, "
-            f"`{len(self.bot.cogs)}/5` Cogs loaded.",
+            f"`{len(self.bot.cogs)}/{len(self.bot.cogs)}` Cogs loaded.",
             f"Developed and managed by {dev}",
             ""
         ]

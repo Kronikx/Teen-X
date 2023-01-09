@@ -20,7 +20,7 @@ class Radical(commands.Bot):
         allowed_mentions = discord.AllowedMentions(roles=False, everyone=False, users=True)
         intents = discord.Intents(guilds=True, members=True, bans=True, emojis=True, messages=True, reactions=True, message_content=True)
         super().__init__(
-            command_prefix= commands.when_mentioned_or('.'),
+            command_prefix= commands.when_mentioned_or(','),
             case_insensitive = True,
             chunk_guilds_at_startup=True,
             heartbeat_timeout=150.0,
