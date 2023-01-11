@@ -1,4 +1,5 @@
 import time
+import animec
 import discord
 
 from discord.ext import commands
@@ -16,19 +17,28 @@ class Users(commands.Cog):
     @commands.command(name="ping")
     async def _ping(self, ctx):
         """Display the bots ping."""
+        msg = await ctx.reply("Pinging...")
+        
         try:
             t_1 = time.perf_counter()
             await ctx.channel.typing() # Getting API ping
             t_2 = time.perf_counter()
         except Exception as e:
-            # await loggingEmbed(self.bot, type='error', msg=e)
+            await ctx.send(embed = Embeds().unhandled())
             pass
 
-        api_ping = round((t_2-t_1)*1000)
+        a_1 = time.perf_counter()
+        result = animec.Anime("Demon Slayer")
+        a_2 = time.perf_counter()
+
+        api_ping = round((t_2 - t_1)*1000, 2)
         web_ping = round(self.bot.latency * 1000, 2)
 
-        await ctx.reply(f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
-    
+        if result:
+            await msg.edit(content=f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**\n<:animec:1062726988428742666> **{round((a_2 - a_1), 2)}ms**')
+        else:
+            await msg.edit(content=f'<a:typing:1040254641121804359> **{api_ping}ms**\n<:discord:1040254738433847317> **{web_ping}ms**')
+
     @commands.command(name='avatar', aliases=['av', 'pfp'])
     async def _avatar(self, ctx, user: discord.User = None):
         """Display someones avatar."""
@@ -78,7 +88,7 @@ class Users(commands.Cog):
             view.add_item(discord.ui.Button(label="Image URL", style=discord.ButtonStyle.link, url=member.guild_avatar.url))
             await ctx.reply(embed=av, view=view)
 
-    @commands.hybrid_command(name="whois",  aliases=['ui', 'userinfo'])
+    @commands.command(name="whois",  aliases=['ui', 'userinfo'])
     async def _whois(self, ctx, user: discord.User = None):
         """Find information about a member."""
         if user is None:
@@ -90,14 +100,11 @@ class Users(commands.Cog):
         # Guild Variables
         if member is not None:
             pos = sum(m.joined_at < member.joined_at for m in ctx.guild.members if m.joined_at is not None)
-            roles = []
-            for role in member.roles:
-                roles.append(role.mention)
 
         em = discord.Embed(description=f"**User Information:** {user.mention}", color=ctx.author.color)
         em.set_thumbnail(url=user.display_avatar)
         em.add_field(name="Information", value=f"**Name:** `{user}`\n**ID:** `{user.id}`\n**Is Bot:** `{bot}`\n**Created:** <t:{int(user.created_at.timestamp())}:R>\n**Guilds:** `{Mutuals} Shared`", inline=True)
-        em.add_field(name="Guild Related", value=f"**Joined:** <t:{int(ctx.author.joined_at.timestamp())}:R>\n**Join Pos:** `{pos}/{len(ctx.guild.members)}`\n**Top Role:** {roles[1]}\n**Color:** `{member.color}`", inline=True) if member else None
+        em.add_field(name="Guild Related", value=f"**Joined:** <t:{int(ctx.author.joined_at.timestamp())}:R>\n**Join Pos:** `{pos}/{len(ctx.guild.members)}`\n**Color:** `{member.color}`", inline=True) if member else None
         await ctx.send(embed=em)
 
 
